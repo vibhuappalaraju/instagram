@@ -23,6 +23,30 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 configuration.server = "https://instagram-proj.herokuapp.com/parse"
             })
         )
+        
+        if PFUser.current() != nil {
+            let storyboard = UIStoryboard(name: "Main", bundle: nil)
+            // view controller currently being set in Storyboard as default will be overridden
+            window?.rootViewController = storyboard.instantiateViewController(withIdentifier: "TabBar")
+        }
+
+        NotificationCenter.default.addObserver(forName: Notification.Name("didLogout"), object: nil, queue: OperationQueue.main) { (Notification) in
+            print("Logout notification received")
+            // TODO: Logout the User
+            // TODO: Load and show the login view controller
+            // Logout the current user
+            PFUser.logOutInBackground(block: { (error) in
+                if let error = error {
+                    print(error.localizedDescription)
+                } else {
+                    print("Successful loggout")
+                    // Load and show the login view controller
+                    let storyboard = UIStoryboard(name: "Main", bundle: nil)
+                    let loginViewController = storyboard.instantiateViewController(withIdentifier: "LoginViewController")
+                    self.window?.rootViewController = loginViewController
+                }
+            })
+        }
         // Override point for customization after application launch.
         return true
     }
